@@ -11,6 +11,10 @@ def get_subreddits():
     return subreddits
 
 
+def get_user_agent():
+    return "Image Downloader"
+
+
 def main():
     reddit_downloader = RedditDownloader(get_subreddits())
     reddit_downloader.download()
