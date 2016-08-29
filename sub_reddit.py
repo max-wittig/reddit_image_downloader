@@ -1,6 +1,7 @@
 from download_mode import *
 import praw
 import main
+import os
 
 
 class Subreddit:
@@ -10,13 +11,25 @@ class Subreddit:
         self.limit = 10
         self.reddit = praw.Reddit(user_agent=main.get_user_agent())
         self.subreddit = self.reddit.get_subreddit(self.name)
+        self.allow_suffix = ["jpeg", "jpg", "flv", "gif", "gifv"]
+
+    def get_filtered_links(self, links):
+        filtered_links = []
+        for link in links:
+            filename, suffix = os.path.splitext(link)
+            if suffix is not None and suffix is not "":
+                suffix = str(suffix).split(".")[1]
+                for suf in self.allow_suffix:
+                    if suffix == suf:
+                        filtered_links.append(link)
+        return filtered_links
 
     def get_submission_links(self, submissions):
         links = []
         for sub in submissions:
             if sub.url is not None:
                 links.append(sub.url)
-        return links
+        return self.get_filtered_links(links)
 
     def get_subreddit_links(self):
         links = []
