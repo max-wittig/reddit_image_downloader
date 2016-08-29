@@ -1,8 +1,6 @@
 from downloader import *
-
 import praw
 import main
-import os
 
 
 class RedditDownloader:

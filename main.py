@@ -4,10 +4,10 @@ from sub_reddit import *
 
 def get_subreddits():
     subreddits = []
-    sub = Subreddit("earthporn")
+    sub = Subreddit("funny")
     sub.limit = 1000
     subreddits.append(sub)
-    sub2 = Subreddit("funny")
+    sub2 = Subreddit("pics")
     sub2.limit = 1000
     subreddits.append(sub2)
     return subreddits

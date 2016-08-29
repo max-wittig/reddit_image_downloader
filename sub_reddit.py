@@ -2,7 +2,6 @@ from download_mode import *
 from link import *
 import praw
 import main
-import os
 
 
 class Subreddit:
