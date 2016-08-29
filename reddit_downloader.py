@@ -14,4 +14,4 @@ class RedditDownloader:
         for subreddit in self.subreddits:
             links = subreddit.get_subreddit_links()
             for link in links:
-                Downloader.download(link, subreddit.name, link.split('/')[-1])
+                Downloader.download(link.url, subreddit.name, link.title + link.get_file_extension())

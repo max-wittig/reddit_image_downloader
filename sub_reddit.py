@@ -1,4 +1,5 @@
 from download_mode import *
+from link import *
 import praw
 import main
 import os
@@ -13,10 +14,11 @@ class Subreddit:
         self.subreddit = self.reddit.get_subreddit(self.name)
         self.allow_suffix = ["jpeg", "jpg", "flv", "gif", "gifv"]
 
+    """filters links based on file extension, only allow_suffix"""
     def get_filtered_links(self, links):
         filtered_links = []
         for link in links:
-            filename, suffix = os.path.splitext(link)
+            suffix = link.get_file_extension()
             if suffix is not None and suffix is not "":
                 suffix = str(suffix).split(".")[1]
                 for suf in self.allow_suffix:
@@ -28,7 +30,9 @@ class Subreddit:
         links = []
         for sub in submissions:
             if sub.url is not None:
-                links.append(sub.url)
+                title = str(str(sub).split(":: ")[1]).replace(" ", "_").replace("/", "-").replace(".", "")
+                link = Link(sub.url, title)
+                links.append(link)
         return self.get_filtered_links(links)
 
     def get_subreddit_links(self):
