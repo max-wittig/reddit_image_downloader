@@ -2,7 +2,7 @@
 downloads link content(images, gifs, videos) from reddit  
 
 ##Installation
-`pip install -r requirements.txt`
+`pip3 install -r requirements.txt`
 
 
 ##Usage example
