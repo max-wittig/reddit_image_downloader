@@ -36,10 +36,14 @@ class Subreddit:
 
     def get_subreddit_links(self):
         links = []
-        if self.download_mode is DownloadMode.TOP:
-            submissions = self.subreddit.get_top(limit=self.limit)
-            links.extend(self.get_submission_links(submissions))
-        elif self.download_mode == DownloadMode.HOT:
-            submissions = self.subreddit.get_hot(limit=self.limit)
-            links.extend(self.get_submission_links(submissions))
-        return links
+        try:
+            if self.download_mode is DownloadMode.TOP:
+                submissions = self.subreddit.get_top(limit=self.limit)
+                links.extend(self.get_submission_links(submissions))
+            elif self.download_mode == DownloadMode.HOT:
+                submissions = self.subreddit.get_hot(limit=self.limit)
+                links.extend(self.get_submission_links(submissions))
+            return links
+        except:
+            print("Could not download image in " + self.name)
+            "Catch forbidden error"

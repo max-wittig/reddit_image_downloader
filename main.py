@@ -1,6 +1,7 @@
 from reddit_downloader import *
 from sub_reddit import *
 import argparse
+import threading
 
 
 def get_subreddits(subreddit_names, limit=100):
@@ -16,8 +17,8 @@ def get_args():
     parser = argparse.ArgumentParser("Downloads images from reddit")
     parser.add_argument("-d", "--debug", help="Use Debug option", action='store_true')
     parser.add_argument("-s", "--subreddits", help="Add subreddits to download from", nargs="+")
-    parser.add_argument("-l", "--limit", help="How many submission it should look at")
-
+    parser.add_argument("-l", "--limit", help="How many submission it should look at", type=int)
+    parser.add_argument("-m", "--multi", help="Subreddits in multireddit form")
     options = parser.parse_args()
     return vars(options)
 
@@ -31,23 +32,37 @@ def get_user_agent():
 
 
 def main():
-    subreddit_names = []
+    subreddit_names = list()
     options = get_args()
     debug = options.get("debug")
     arg_subreddits = options.get("subreddits")
     limit = options.get("limit")
+    multireddits = options.get("multi")
     if debug:
         subreddit_names = debug_get_subreddits()
     else:
         subreddit_names = arg_subreddits
+
+    if multireddits is not None:
+        if subreddit_names is None:
+            subreddit_names = []
+        subreddit_names += multireddits.split("+")
 
     if limit is None:
         limit = 100
     if subreddit_names is None:
         exit("No arguments")
     subreddits = get_subreddits(subreddit_names, limit=limit)
+    print("Download started...")
     reddit_downloader = RedditDownloader(subreddits)
-    reddit_downloader.download()
+    thread = threading.Thread(target=reddit_downloader.download)
+    """thread dies, if main dies"""
+    thread.setDaemon(True)
+    thread.start()
+    input("Press RETURN to interrupt\n")
+    reddit_downloader.stop()
+    thread.join()
+
 
 if __name__ == '__main__':
     main()

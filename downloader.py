@@ -12,12 +12,15 @@ class Downloader:
 
     @staticmethod
     def download(url, folder_name, filename):
-        file = requests.get(url=url)
-        path = os.path.join(Downloader.root_folder_name, folder_name)
-        Downloader.create_folder(path)
-        with open(os.path.join(path, filename), 'wb') as f:
-            for chunk in file.iter_content(chunk_size=1024):
-                if chunk:
-                    f.write(chunk)
-                    f.flush()
+        try:
+            file = requests.get(url=url)
+            path = os.path.join(Downloader.root_folder_name, folder_name)
+            Downloader.create_folder(path)
+            with open(os.path.join(path, filename), 'wb') as f:
+                for chunk in file.iter_content(chunk_size=1024):
+                    if chunk:
+                        f.write(chunk)
+                        f.flush()
+        except:
+            print("Could not download" + folder_name + "/" + filename)
 
