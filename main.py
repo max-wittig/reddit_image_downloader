@@ -4,10 +4,11 @@ import argparse
 import threading
 
 
-def get_subreddits(subreddit_names, limit=100):
+def get_subreddits(subreddit_names, limit=100, download_mode=DownloadMode.TOP):
     subreddits = []
     for name in subreddit_names:
         sub = Subreddit(name)
+        sub.download_mode = download_mode
         sub.limit = limit
         subreddits.append(sub)
     return subreddits
@@ -19,6 +20,7 @@ def get_args():
     parser.add_argument("-s", "--subreddits", help="Add subreddits to download from", nargs="+")
     parser.add_argument("-l", "--limit", help="How many submission it should look at", type=int)
     parser.add_argument("-m", "--multi", help="Subreddits in multireddit form")
+    parser.add_argument("-dm", "--download_mode", help="top | hot | new")
     options = parser.parse_args()
     return vars(options)
 
@@ -38,6 +40,7 @@ def main():
     arg_subreddits = options.get("subreddits")
     limit = options.get("limit")
     multireddits = options.get("multi")
+    download_mode = options.get("download_mode")
     if debug:
         subreddit_names = debug_get_subreddits()
     else:
@@ -50,9 +53,14 @@ def main():
 
     if limit is None:
         limit = 100
+
     if subreddit_names is None:
-        exit("No arguments")
-    subreddits = get_subreddits(subreddit_names, limit=limit)
+        exit("No subreddits to download from. \nSpecify some with the -s option")
+
+    if not DownloadMode.contains(download_mode):
+        download_mode = DownloadMode.TOP
+
+    subreddits = get_subreddits(subreddit_names, limit=limit, download_mode=download_mode)
     print("Download started...")
     reddit_downloader = RedditDownloader(subreddits)
     thread = threading.Thread(target=reddit_downloader.download)
