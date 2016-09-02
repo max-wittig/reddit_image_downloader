@@ -1,4 +1,5 @@
 from download_mode import *
+from image_scraper import *
 from link import *
 import praw
 import main
@@ -11,6 +12,7 @@ class Subreddit:
         self.limit = 10
         self.reddit = praw.Reddit(user_agent=main.get_user_agent())
         self.subreddit = self.reddit.get_subreddit(self.name)
+        self.image_scraper = ImageScraper()
         self.allow_suffix = ["jpeg", "jpg", "flv", "gif", "gifv"]
 
     """filters links based on file extension, only allow_suffix"""
@@ -23,7 +25,12 @@ class Subreddit:
                 for suf in self.allow_suffix:
                     if suffix == suf:
                         filtered_links.append(link)
+            elif str(link.url).find("imgur.com") > 0:
+                filtered_links.extend(self.get_links_from_imgur(link))
         return filtered_links
+
+    def get_links_from_imgur(self, link):
+        return self.image_scraper.get_image_urls(link, self.allow_suffix)
 
     def get_submission_links(self, submissions):
         links = []
