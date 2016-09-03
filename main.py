@@ -67,10 +67,7 @@ def main():
     """thread dies, if main dies"""
     thread.setDaemon(True)
     thread.start()
-    input("Press RETURN to interrupt\n")
-    reddit_downloader.stop()
     thread.join()
-
 
 if __name__ == '__main__':
     main()
