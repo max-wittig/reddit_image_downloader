@@ -12,8 +12,8 @@ class Subreddit:
         self.limit = 10
         self.reddit = praw.Reddit(user_agent=main.get_user_agent())
         self.subreddit = self.reddit.get_subreddit(self.name)
-        self.allow_suffix = ["jpeg", "jpg", "flv", "gif", "gifv"]
-        self.image_scraper = ImageScraper(self.allow_suffix)
+        self.allowed_extensions = ["jpeg", "jpg", "flv", "gif", "gifv"]
+        self.image_scraper = ImageScraper(self.allowed_extensions)
 
     """filters links based on file extension, only allow_suffix"""
     def get_filtered_links(self, links):
@@ -22,7 +22,7 @@ class Subreddit:
             suffix = link.get_file_extension()
             if suffix is not None and suffix != "":
                 suffix = str(suffix).split(".")[1]
-                for suf in self.allow_suffix:
+                for suf in self.allowed_extensions:
                     if suffix == suf:
                         filtered_links.append(link)
             elif (suffix is None or suffix == "") and str(link.url).find("imgur.com") > 0:

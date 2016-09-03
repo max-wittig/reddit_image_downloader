@@ -4,15 +4,18 @@ import main
 
 
 class RedditDownloader:
-    def __init__(self, subreddits):
+    def __init__(self, subreddits, min_filesize=50, override=False, allowed_extensions=None):
         self.subreddits = subreddits
         self.reddit = praw.Reddit(user_agent=main.get_user_agent())
         self.running = True
-        self.downloader = Downloader(50)
-        self.min_size = 50
+        self.downloader = Downloader(min_filesize, override=override)
+        self.allowed_extensions = allowed_extensions
 
     def download(self):
         for subreddit in self.subreddits:
+            """overrides default allowed file extensions"""
+            if self.allowed_extensions is not None:
+                subreddit.allowed_extensions = self.allowed_extensions
             """stop thread if running is False"""
             links = subreddit.get_subreddit_links()
             if links is not None:
